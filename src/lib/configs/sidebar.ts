@@ -1,12 +1,4 @@
-import {
-  FileText,
-  LucideIcon,
-  File,
-  CheckSquare2,
-  Wallet2,
-  UserCircle,
-  Lock,
-} from "lucide-react";
+import { LucideIcon, Wallet2, UserCircle, Lock } from "lucide-react";
 
 export interface SidebarItem {
   title: string;

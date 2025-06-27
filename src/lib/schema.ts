@@ -13,3 +13,7 @@ export const passwordSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
+
+  export const unlockPasswordSchema = z.object({
+    password: z.string({ message: "Required! " }),
+  });

@@ -1,7 +1,7 @@
 "use client";
 
 import type * as React from "react";
-import { ChevronLeft, Target, WalletMinimal } from "lucide-react";
+import { ChevronLeft, WalletMinimal } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
