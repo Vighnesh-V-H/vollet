@@ -148,7 +148,6 @@ export function NavUser() {
               />
             </div>
 
-            {/* User Accounts */}
             <div className='space-y-1 mb-2'>
               {filteredUsers.map((user) => (
                 <DropdownMenuItem

@@ -54,7 +54,7 @@ export default function UnlockForm() {
   };
 
   return (
-    <Card className='w-full  max-w-md bg-white dark:bg-black border-gray-200 dark:border-gray-800'>
+    <Card className='w-full  absolute top-1/2 left-1/2 -translate-1/2  max-w-md bg-white dark:bg-black border-gray-200 dark:border-gray-800'>
       <CardHeader className='space-y-1'>
         <CardTitle className='text-2xl font-bold text-black dark:text-white'>
           Vollet
