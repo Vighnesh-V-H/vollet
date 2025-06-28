@@ -22,7 +22,7 @@ export function SidebarOptions() {
         <SidebarGroup
           key={section.title}
           className={cn("space-y-2", index > 0 && "mt-8")}>
-          <SidebarGroupLabel className='text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3'>
+          <SidebarGroupLabel className='text-lg font-semibold text-muted-foreground uppercase tracking-wider mb-3 px-3'>
             {section.title}
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -44,14 +44,9 @@ export function SidebarOptions() {
                       href={item.url}
                       className='flex items-center gap-3 w-full'>
                       <item.icon className='h-5 w-5 shrink-0' />
-                      <span className='group-data-[collapsible=icon]:hidden font-medium'>
+                      <span className='group-data-[collapsible=icon]:hidden font-sans text-sm'>
                         {item.title}
                       </span>
-                      {/* {item.badge && (
-                        <SidebarMenuBadge className='ml-auto bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-semibold px-2 py-0.5 rounded-full text-xs'>
-                          {item.badge}
-                        </SidebarMenuBadge>
-                      )} */}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

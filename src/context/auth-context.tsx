@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { hashPassword } from "@/lib/crypto";
-import { isNewUser } from "@/lib/user";
+import { getUnlockState, storeUnlockState } from "@/lib/store/indexdb";
 
 interface AuthContextType {
   isUnlocked: boolean;
@@ -18,10 +18,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const alreadyUnlocked = sessionStorage.getItem("isUnlocked");
-    if (alreadyUnlocked === "true") {
-      setIsUnlocked(true);
-    }
+    const checkUnlock = async () => {
+      const alreadyUnlocked = await getUnlockState();
+      if (alreadyUnlocked === true) {
+        setIsUnlocked(true);
+      }
+    };
+
+    checkUnlock();
   }, []);
 
   const isNewUser = () => {
@@ -41,8 +45,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const actualVerifier = await hashPassword(password, salt);
 
     if (actualVerifier === passwordVerifier) {
+      await storeUnlockState(true);
       setIsUnlocked(true);
-      sessionStorage.setItem("isUnlocked", "true"); // persist for tab reloads
       return true;
     } else {
       return false;

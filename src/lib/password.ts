@@ -2,6 +2,7 @@
 import { generateSalt, hashPassword, bufferToHex } from "@/lib/crypto";
 import { z } from "zod";
 import { passwordSchema } from "./schema";
+import { createUser } from "./user";
 
 export async function setupPassword(pass: z.infer<typeof passwordSchema>) {
   const success = passwordSchema.safeParse(pass);
@@ -20,6 +21,8 @@ export async function setupPassword(pass: z.infer<typeof passwordSchema>) {
     salt: saltHex,
     passwordVerifier,
   };
+
+  await createUser("Account 1");
 
   localStorage.setItem("lockMeta", JSON.stringify(lockMeta));
 }

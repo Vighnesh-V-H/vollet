@@ -30,7 +30,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       onClick={handleSidebarClick}
       className={`${
         !open ? "cursor-e-resize" : ""
-      } border border-border/40 dark:border-border/20 bg-background/95 dark:bg-background/90 backdrop-blur-sm rounded-2xl shadow-lg m-1  overflow-hidden`}
+      }  rounded-2xl shadow-lg m-1  overflow-hidden`}
       {...props}>
       <SidebarHeader className=' pb-4'>
         <div className='flex items-center justify-between'>

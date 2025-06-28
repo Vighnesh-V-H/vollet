@@ -20,9 +20,8 @@ type PasswordFormData = z.infer<typeof unlockPasswordSchema>;
 
 export default function UnlockForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const { unlock, isUnlocked } = useAuth();
-
-  console.log("isun", isUnlocked);
 
   const router = useRouter();
 
@@ -31,8 +30,7 @@ export default function UnlockForm() {
       router.push("/home");
       return;
     }
-
-    if (!isNewUser()) {
+    if (isNewUser()) {
       router.push("/");
     } else {
       router.push("/unlock");
@@ -49,9 +47,10 @@ export default function UnlockForm() {
   });
 
   const onSubmit = async (data: PasswordFormData) => {
-    const daa = await unlock(data.password);
-    console.log(daa);
-    reset();
+    const isUnlock = await unlock(data.password);
+    if (!isUnlock) {
+      setError("Wrong Password");
+    }
   };
 
   return (
@@ -91,10 +90,8 @@ export default function UnlockForm() {
                 </span>
               </Button>
             </div>
-            {errors.password && (
-              <p className='text-sm text-red-500 dark:text-red-400'>
-                {errors.password.message}
-              </p>
+            {error && (
+              <p className='text-sm text-red-500 dark:text-red-400'>{error}</p>
             )}
           </div>
 
@@ -102,7 +99,7 @@ export default function UnlockForm() {
             type='submit'
             className='w-full bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200'
             disabled={isSubmitting}>
-            {isSubmitting ? "Setting Password..." : "Set Password"}
+            {isSubmitting ? "Unlocking..." : "Unlock"}
           </Button>
         </form>
       </CardContent>

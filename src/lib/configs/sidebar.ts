@@ -1,4 +1,10 @@
-import { LucideIcon, Wallet2, UserCircle, Lock } from "lucide-react";
+import {
+  LucideIcon,
+  Wallet2,
+  UserCircle,
+  Lock,
+  SettingsIcon,
+} from "lucide-react";
 
 export interface SidebarItem {
   title: string;
@@ -22,9 +28,9 @@ export const sidebarConfig: SidebarSection[] = [
         icon: Wallet2,
       },
       {
-        title: "Account",
-        url: "/account",
-        icon: UserCircle,
+        title: "Settings",
+        url: "/settings",
+        icon: SettingsIcon,
       },
 
       {
