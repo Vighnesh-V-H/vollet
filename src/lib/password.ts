@@ -22,7 +22,7 @@ export async function setupPassword(pass: z.infer<typeof passwordSchema>) {
     passwordVerifier,
   };
 
-  await createUser("Account 1");
+await createUser("Account 1");
 
   localStorage.setItem("lockMeta", JSON.stringify(lockMeta));
 }

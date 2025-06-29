@@ -2,44 +2,91 @@
 import { UUIDTypes, v4 as uuidv4 } from "uuid";
 
 export const isNewUser = () => {
-  const walletMeta = localStorage.getItem("lockMeta");
-  return !walletMeta;
+  const lockMeta = localStorage.getItem("lockMeta");
+  return !lockMeta;
 };
 
 export const createUser = (name: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 3); // bump version if needed
+    const request = indexedDB.open("WalletDB", 6);
 
-    request.onupgradeneeded = () => {
+    request.onupgradeneeded = (event) => {
       const db = request.result;
+      const oldVersion = event.oldVersion;
+
+      // Handle different upgrade scenarios
       if (!db.objectStoreNames.contains("userStore")) {
+        console.log("Creating userStore object store");
         db.createObjectStore("userStore", { keyPath: "key" });
       }
     };
 
     request.onsuccess = () => {
       const db = request.result;
+
+      // Double-check that our object store exists
+      if (!db.objectStoreNames.contains("userStore")) {
+        db.close();
+        reject(
+          new Error(
+            "Object store 'userStore' does not exist. Try deleting the database and recreating it."
+          )
+        );
+        return;
+      }
+
       const tx = db.transaction("userStore", "readwrite");
       const store = tx.objectStore("userStore");
 
-      const uuid = uuidv4();
-      const user = {
-        hasMnemonic: true,
-        mnemonicCreatedAt: Date.now(),
-        username: name,
-        uuid: uuid,
+      // First, check if userData already exists
+      const getRequest = store.get("userData");
+
+      getRequest.onsuccess = () => {
+        const existingData = getRequest.result;
+
+        const uuid = uuidv4();
+        const newUser = {
+          hasMnemonic: true,
+          mnemonicCreatedAt: Date.now(),
+          username: name,
+          uuid: uuid,
+        };
+
+        let userData;
+
+        if (existingData) {
+          // Add to existing users
+          userData = {
+            ...existingData,
+            activeUser: newUser,
+            users: [...existingData.users, newUser],
+          };
+        } else {
+          // Create new userData
+          userData = {
+            key: "userData",
+            activeUser: newUser,
+            users: [newUser],
+          };
+        }
+
+        const putRequest = store.put(userData);
+
+        putRequest.onsuccess = () => {
+          db.close();
+          resolve();
+        };
+
+        putRequest.onerror = () => {
+          db.close();
+          reject(putRequest.error);
+        };
       };
 
-      const userData = {
-        key: "userData",
-        activeUser: user,
-        users: [user],
+      getRequest.onerror = () => {
+        db.close();
+        reject(getRequest.error);
       };
-
-      store.put(userData);
-
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
     };
 
     request.onerror = () => reject(request.error);
@@ -51,7 +98,7 @@ export const fetchUsers = (): Promise<{
   users: any[];
 } | null> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 3);
+    const request = indexedDB.open("WalletDB", 6);
 
     request.onsuccess = () => {
       const db = request.result;
@@ -86,7 +133,7 @@ export const fetchUsers = (): Promise<{
 
 export const setActiveUser = (uuid: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 3);
+    const request = indexedDB.open("WalletDB", 6);
 
     request.onsuccess = () => {
       const db = request.result;

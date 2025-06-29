@@ -1,5 +1,6 @@
 "use client";
 
+import Blockchains from "@/components/blockchains";
 import Header from "@/components/header";
 import PasswordForm from "@/components/password-form";
 import { useAuth } from "@/context/auth-context";
@@ -27,7 +28,7 @@ export default function Home() {
     <div className='flex flex-col gap-8 dark:bg-black bg-white h-screen  items-center w-screen '>
       <Header />
 
-      <PasswordForm />
+      <Blockchains />
     </div>
   );
 }

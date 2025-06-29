@@ -1,45 +1,42 @@
-export function storeUnlockState(isUnlocked: boolean): Promise<void> {
+function getDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 3);
+    const request = indexedDB.open("WalletDB");
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains("lockState")) {
         db.createObjectStore("lockState", { keyPath: "key" });
       }
     };
 
-    request.onsuccess = () => {
-      const db = request.result;
-      const tx = db.transaction("lockState", "readwrite"); // ✅ correct mode
-      const store = tx.objectStore("lockState");
-
-      store.put({ key: "isUnlocked", value: isUnlocked });
-
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    };
-
+    request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 }
 
-export function getUnlockState(): Promise<boolean> {
+export async function storeUnlockState(isUnlocked: boolean): Promise<void> {
+  const db = await getDB();
+  const tx = db.transaction("lockState", "readwrite");
+  const store = tx.objectStore("lockState");
+
+  store.put({ key: "isUnlocked", value: isUnlocked });
+
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 3);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
 
-    request.onsuccess = () => {
-      const db = request.result;
-      const tx = db.transaction("lockState", "readonly");
-      const store = tx.objectStore("lockState");
+export async function getUnlockState(): Promise<boolean> {
+  const db = await getDB();
+  const tx = db.transaction("lockState", "readonly");
+  const store = tx.objectStore("lockState");
 
-      const getRequest = store.get("isUnlocked");
-      getRequest.onsuccess = () => {
-        resolve(getRequest.result?.value ?? false);
-      };
-      getRequest.onerror = () => reject(getRequest.error);
+  return new Promise((resolve, reject) => {
+    const getRequest = store.get("isUnlocked");
+    getRequest.onsuccess = () => {
+      resolve(getRequest.result?.value ?? false);
     };
-
-    request.onerror = () => reject(request.error);
+    getRequest.onerror = () => reject(getRequest.error);
   });
 }
