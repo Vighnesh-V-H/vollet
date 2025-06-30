@@ -1,4 +1,3 @@
-import { randomBytes, secretbox } from "tweetnacl";
 import { generateMnemonic } from "bip39";
 
 export const generateWallet = (id: string, password: string) => {

@@ -1,5 +1,5 @@
 "use client";
-import { UUIDTypes, v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 export const isNewUser = () => {
   const lockMeta = localStorage.getItem("lockMeta");
@@ -8,7 +8,7 @@ export const isNewUser = () => {
 
 export const createUser = (name: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 6);
+    const request = indexedDB.open("UserDB");
 
     request.onupgradeneeded = (event) => {
       const db = request.result;
@@ -24,7 +24,6 @@ export const createUser = (name: string): Promise<void> => {
     request.onsuccess = () => {
       const db = request.result;
 
-      // Double-check that our object store exists
       if (!db.objectStoreNames.contains("userStore")) {
         db.close();
         reject(
@@ -48,6 +47,7 @@ export const createUser = (name: string): Promise<void> => {
         const newUser = {
           hasMnemonic: true,
           mnemonicCreatedAt: Date.now(),
+          isUnlocked: true,
           username: name,
           uuid: uuid,
         };
@@ -55,14 +55,12 @@ export const createUser = (name: string): Promise<void> => {
         let userData;
 
         if (existingData) {
-          // Add to existing users
           userData = {
             ...existingData,
             activeUser: newUser,
             users: [...existingData.users, newUser],
           };
         } else {
-          // Create new userData
           userData = {
             key: "userData",
             activeUser: newUser,
@@ -98,7 +96,7 @@ export const fetchUsers = (): Promise<{
   users: any[];
 } | null> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 6);
+    const request = indexedDB.open("UserDB");
 
     request.onsuccess = () => {
       const db = request.result;
@@ -133,7 +131,7 @@ export const fetchUsers = (): Promise<{
 
 export const setActiveUser = (uuid: string): Promise<void> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("WalletDB", 6);
+    const request = indexedDB.open("UserDB");
 
     request.onsuccess = () => {
       const db = request.result;

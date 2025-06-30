@@ -1,7 +1,7 @@
 import { randomBytes, secretbox } from "tweetnacl";
 
 import bs58 from "bs58";
-import Crypto, { CipherOCB } from "crypto";
+import Crypto from "crypto";
 
 const { encode, decode } = bs58;
 

@@ -2,7 +2,6 @@
 
 import Blockchains from "@/components/blockchains";
 import Header from "@/components/header";
-import PasswordForm from "@/components/password-form";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

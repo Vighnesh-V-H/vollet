@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuth } from "@/context/auth-context";
-import { generateMnemonic } from "bip39";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -19,7 +18,7 @@ function Home() {
     } else {
       router.push("/unlock");
     }
-  }, [isNewUser]);
+  }, [isNewUser, isUnlocked]);
 
   return <div>home</div>;
 }
