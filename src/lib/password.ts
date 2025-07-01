@@ -4,7 +4,13 @@ import { z } from "zod";
 import { passwordSchema } from "./schema";
 import { createUser } from "./user";
 
-export async function setupPassword(pass: z.infer<typeof passwordSchema>) {
+interface SetupUser {
+  pass: z.infer<typeof passwordSchema>;
+  id: string;
+  accountIndex?: Number;
+}
+
+export async function setupUser({ id, pass, accountIndex }: SetupUser) {
   const success = passwordSchema.safeParse(pass);
   if (!success.success) {
     return;
@@ -22,7 +28,7 @@ export async function setupPassword(pass: z.infer<typeof passwordSchema>) {
     passwordVerifier,
   };
 
-await createUser("Account 1");
+  await createUser({ name: "Account 1", password, blockChainId: id });
 
   localStorage.setItem("lockMeta", JSON.stringify(lockMeta));
 }

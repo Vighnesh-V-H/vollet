@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/context/auth-context";
+import { generateWallet } from "@/lib/wallet";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

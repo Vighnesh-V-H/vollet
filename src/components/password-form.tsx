@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { passwordSchema } from "@/lib/schema";
 import { useRouter } from "next/navigation";
-import { setupPassword } from "@/lib/password";
+import { setupUser } from "@/lib/password";
 import { generateWallet } from "@/lib/wallet";
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
@@ -38,8 +38,8 @@ export default function PasswordForm({ id }: { id: string }) {
   });
 
   const onSubmit = async (data: PasswordFormData) => {
-    await setupPassword(data);
-    generateWallet(id, data.password);
+    await setupUser({ id, pass: data });
+
     router.push("/home");
     reset();
   };

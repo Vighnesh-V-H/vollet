@@ -71,3 +71,34 @@ export async function getUnlockState(): Promise<boolean> {
     };
   });
 }
+
+
+export function storeSecurePhrase(encryptedMnemonic: object): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("WalletDB");
+
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains("secureSeed")) {
+        db.createObjectStore("secureSeed");
+      }
+    };
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const tx = db.transaction("secureSeed", "readwrite");
+      const store = tx.objectStore("secureSeed");
+
+      store.put(encryptedMnemonic, "secure-seed");
+
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+
+      tx.onerror = () => reject(tx.error);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}

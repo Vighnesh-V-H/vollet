@@ -1,20 +1,37 @@
 "use client";
 import { v4 as uuidv4 } from "uuid";
+import { generateWallet } from "./wallet";
+
+interface SetupUser {
+  name: string;
+  password: string;
+  blockChainId: string;
+  accountIndex?: Number;
+}
 
 export const isNewUser = () => {
   const lockMeta = localStorage.getItem("lockMeta");
   return !lockMeta;
 };
 
-export const createUser = (name: string): Promise<void> => {
+export const createUser = async ({
+  name,
+  password,
+  blockChainId,
+  accountIndex,
+}: SetupUser): Promise<void> => {
+  const publicKey = await generateWallet(
+    blockChainId,
+    password,
+    (accountIndex = 0)
+  );
+
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("UserDB");
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
       const db = request.result;
-      const oldVersion = event.oldVersion;
 
-      // Handle different upgrade scenarios
       if (!db.objectStoreNames.contains("userStore")) {
         console.log("Creating userStore object store");
         db.createObjectStore("userStore", { keyPath: "key" });
@@ -26,26 +43,35 @@ export const createUser = (name: string): Promise<void> => {
 
       if (!db.objectStoreNames.contains("userStore")) {
         db.close();
-        reject(
-          new Error(
-            "Object store 'userStore' does not exist. Try deleting the database and recreating it."
-          )
-        );
+        reject(new Error("Object store 'userStore' does not exist."));
         return;
       }
 
       const tx = db.transaction("userStore", "readwrite");
       const store = tx.objectStore("userStore");
 
-      // First, check if userData already exists
       const getRequest = store.get("userData");
 
       getRequest.onsuccess = () => {
         const existingData = getRequest.result;
 
+        const blockChainName =
+          blockChainId === "501"
+            ? "solana"
+            : blockChainId === "60"
+            ? "etherium"
+            : "";
+
         const uuid = uuidv4();
         const newUser = {
           hasMnemonic: true,
+          publicKeys: {
+            activeChain: `${blockChainName}`,
+            wallets: {
+              blockChainName,
+              publicKey,
+            },
+          },
           mnemonicCreatedAt: Date.now(),
           isUnlocked: true,
           username: name,
