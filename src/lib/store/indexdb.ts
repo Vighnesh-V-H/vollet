@@ -24,13 +24,13 @@ export async function storeUnlockState(isUnlocked: boolean): Promise<void> {
   return new Promise((resolve, reject) => {
     getRequest.onsuccess = () => {
       const data = getRequest.result;
-      if (!data || !data.activeUser) {
+      if (!data) {
         db.close();
-        reject(new Error("No active user found"));
+        reject(new Error("No userData found"));
         return;
       }
 
-      data.activeUser.isUnlocked = isUnlocked;
+      data.isUnlocked = isUnlocked; // ✅ Store at the root level
 
       const putRequest = store.put(data);
       putRequest.onsuccess = () => {
@@ -60,7 +60,7 @@ export async function getUnlockState(): Promise<boolean> {
 
     getRequest.onsuccess = () => {
       const data = getRequest.result;
-      const state = data?.activeUser?.isUnlocked ?? false;
+      const state = data?.isUnlocked ?? false; // ✅ Read from root
       db.close();
       resolve(state);
     };
@@ -71,6 +71,43 @@ export async function getUnlockState(): Promise<boolean> {
     };
   });
 }
+
+export async function lockUser(): Promise<void> {
+  const db = await getUserDB();
+  const tx = db.transaction("userStore", "readwrite");
+  const store = tx.objectStore("userStore");
+
+  const getRequest = store.get("userData");
+
+  return new Promise((resolve, reject) => {
+    getRequest.onsuccess = () => {
+      const data = getRequest.result;
+      if (!data) {
+        db.close();
+        reject(new Error("No userData found"));
+        return;
+      }
+
+      data.isUnlocked = false;
+
+      const putRequest = store.put(data);
+      putRequest.onsuccess = () => {
+        db.close();
+        resolve();
+      };
+      putRequest.onerror = () => {
+        db.close();
+        reject(putRequest.error);
+      };
+    };
+
+    getRequest.onerror = () => {
+      db.close();
+      reject(getRequest.error);
+    };
+  });
+}
+
 
 
 export function storeSecurePhrase(encryptedMnemonic: object): Promise<void> {

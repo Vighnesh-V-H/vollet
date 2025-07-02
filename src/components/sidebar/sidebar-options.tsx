@@ -11,10 +11,17 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { lockUser } from "@/lib/store/indexdb";
 
 export function SidebarOptions() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLock() {
+    await lockUser();
+    window.location.reload();
+  }
 
   return (
     <>
@@ -40,14 +47,21 @@ export function SidebarOptions() {
                       "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                     )}
                     isActive={item.url === pathname}>
-                    <Link
-                      href={item.url}
-                      className='flex items-center gap-3 w-full'>
-                      <item.icon className='h-5 w-5 shrink-0' />
-                      <span className='group-data-[collapsible=icon]:hidden font-sans text-sm'>
-                        {item.title}
+                    {item.title === "Lock" ? (
+                      <span onClick={handleLock} className='cursor-pointer'>
+                        <item.icon className='h-5 w-5 shrink-0' /> Lock
                       </span>
-                    </Link>
+                    ) : (
+                      <Link
+                        href={item.url}
+                        className='flex items-center gap-3 w-full'>
+                        <item.icon className='h-5 w-5 shrink-0' />
+
+                        <span className='group-data-[collapsible=icon]:hidden font-sans text-sm'>
+                          {item.title}
+                        </span>
+                      </Link>
+                    )}
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
