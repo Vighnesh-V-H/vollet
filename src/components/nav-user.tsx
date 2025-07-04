@@ -101,7 +101,6 @@ export function NavUser() {
             <div className='hidden md:grid flex-1 text-left text-sm leading-tight'>
               <span className='truncate font-semibold'>Loading...</span>
             </div>
-            <ChevronsUpDown className='ml-auto size-4' />
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
@@ -109,13 +108,13 @@ export function NavUser() {
   }
 
   return (
-    <SidebarMenu className='bg-white dark:bg-black rounded-lg'>
-      <SidebarMenuItem className='bg-white dark:bg-black text-black dark:text-white rounded-lg'>
+    <SidebarMenu className='bg-transparent rounded-lg'>
+      <SidebarMenuItem className='bg-transparent   text-black dark:text-white rounded-lg'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size='lg'
-              className='bg-white dark:bg-black text-black dark:text-white rounded-lg'>
+              className='bg-transparent cursor-pointer  text-black dark:text-white rounded-lg'>
               <Avatar className='h-8 w-8 rounded-lg'>
                 <AvatarFallback
                   className={`rounded-lg text-white ${getAvatarColor(
@@ -129,7 +128,6 @@ export function NavUser() {
                   {userData.activeUser.username}
                 </span>
               </div>
-              <ChevronsUpDown className='ml-auto size-4' />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

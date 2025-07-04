@@ -12,7 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     if (isUnlocked) {
-      router.push("/home");
+      router.push("/wallets");
       return;
     }
 

@@ -10,8 +10,6 @@ import {
 import { TooltipGlobal } from "@/components/tooltip-global";
 import { NavUser } from "@/components/nav-user";
 
-// import { Toaster } from "@/components/ui/sonner";
-
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className='h-screen dark:bg-[#191818] dark:text-white bg-[#ffffff] text-background flex overflow-hidden'>

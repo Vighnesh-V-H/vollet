@@ -27,7 +27,7 @@ export default function UnlockForm() {
 
   useEffect(() => {
     if (isUnlocked) {
-      router.push("/home");
+      router.push("/wallets");
       return;
     }
     if (isNewUser()) {
@@ -68,6 +68,7 @@ export default function UnlockForm() {
             </Label>
             <div className='relative'>
               <Input
+                autoFocus
                 id='password'
                 type={showPassword ? "text" : "password"}
                 placeholder='Enter your password'

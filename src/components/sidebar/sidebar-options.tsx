@@ -42,14 +42,17 @@ export function SidebarOptions() {
                     className={cn(
                       "h-11 px-4 rounded-xl transition-all duration-200 group relative",
                       "hover:bg-accent/60 hover:text-accent-foreground hover:shadow-sm",
-                      "data-[active=true]:bg-gradient-to-r data-[active=true]:from-indigo-500 data-[active=true]:to-violet-600",
-                      "data-[active=true]:text-white data-[active=true]:shadow-md data-[active=true]:shadow-indigo-500/15",
+                      "data-[active=true]:bg-gradient-to-r data-[active=true]:from-emerald-800 data-[active=true]:to-emerald-600",
+                      "data-[active=true]:text-white data-[active=true]:shadow-md data-[active=true]:shadow-black",
                       "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
                     )}
                     isActive={item.url === pathname}>
                     {item.title === "Lock" ? (
-                      <span onClick={handleLock} className='cursor-pointer'>
-                        <item.icon className='h-5 w-5 shrink-0' /> Lock
+                      <span onClick={handleLock}>
+                        <item.icon className='h-5 w-5 shrink-0' />
+                        <span className='cursor-pointer group-data-[collapsible=icon]:hidden font-sans text-sm'>
+                          Lock
+                        </span>
                       </span>
                     ) : (
                       <Link

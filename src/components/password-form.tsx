@@ -40,7 +40,7 @@ export default function PasswordForm({ id }: { id: string }) {
   const onSubmit = async (data: PasswordFormData) => {
     await setupUser({ id, pass: data });
 
-    router.push("/home");
+    router.push("/wallets");
     reset();
   };
 

@@ -51,3 +51,54 @@ export const generateWallet = async (
     return null;
   }
 };
+
+
+export const getWallets = (): Promise<
+  Array<{ blockChainName: string; publicKey: string }>
+> => {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("UserDB");
+
+    request.onsuccess = () => {
+      const db = request.result;
+
+      if (!db.objectStoreNames.contains("userStore")) {
+        db.close();
+        reject(new Error("Object store 'userStore' does not exist."));
+        return;
+      }
+
+      const tx = db.transaction("userStore", "readonly");
+      const store = tx.objectStore("userStore");
+
+      const getRequest = store.get("userData");
+
+      getRequest.onsuccess = () => {
+        const result = getRequest.result;
+
+        if (!result || !Array.isArray(result.users)) {
+          db.close();
+          resolve([]);
+          return;
+        }
+
+        const wallets = result.users.map((user: any) => ({
+          blockChainName: user.publicKeys.wallets.blockChainName,
+          publicKey: user.publicKeys.wallets.publicKey,
+        }));
+
+        db.close();
+        resolve(wallets);
+      };
+
+      getRequest.onerror = () => {
+        db.close();
+        reject(getRequest.error);
+      };
+    };
+
+    request.onerror = () => {
+      reject(request.error);
+    };
+  });
+};
