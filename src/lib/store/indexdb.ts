@@ -1,3 +1,12 @@
+export type CipherPayload = {
+  ciphertext: string;
+  nonce: string;
+  salt: string;
+  kdf: string;
+  iterations: number;
+  digest: string;
+};
+
 function getUserDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("UserDB");
@@ -108,8 +117,6 @@ export async function lockUser(): Promise<void> {
   });
 }
 
-
-
 export function storeSecurePhrase(encryptedMnemonic: object): Promise<void> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("WalletDB");
@@ -134,6 +141,32 @@ export function storeSecurePhrase(encryptedMnemonic: object): Promise<void> {
       };
 
       tx.onerror = () => reject(tx.error);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export function retrieveSecurePhrase(): Promise<CipherPayload> {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("WalletDB");
+
+    request.onsuccess = () => {
+      const db = request.result;
+      const tx = db.transaction("secureSeed", "readonly");
+      const store = tx.objectStore("secureSeed");
+
+      const getRequest = store.get("secure-seed");
+
+      getRequest.onsuccess = () => {
+        db.close();
+        resolve(getRequest.result || null);
+      };
+
+      getRequest.onerror = () => {
+        db.close();
+        reject(getRequest.error);
+      };
     };
 
     request.onerror = () => reject(request.error);

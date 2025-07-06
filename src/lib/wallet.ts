@@ -4,7 +4,7 @@ import { derivePath } from "ed25519-hd-key";
 import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 import { decrypt, encrypt } from "./crypto";
-import { storeSecurePhrase } from "./store/indexdb";
+import { retrieveSecurePhrase, storeSecurePhrase } from "./store/indexdb";
 
 export const generateWallet = async (
   id: string,
@@ -26,7 +26,6 @@ export const generateWallet = async (
     let publicKey: string;
 
     if (id === "501") {
-      // Solana
       const { secretKey } = nacl.sign.keyPair.fromSeed(derivedSeed);
       const keypair = Keypair.fromSecretKey(secretKey);
 
@@ -51,7 +50,6 @@ export const generateWallet = async (
     return null;
   }
 };
-
 
 export const getWallets = (): Promise<
   Array<{ blockChainName: string; publicKey: string }>
@@ -101,4 +99,32 @@ export const getWallets = (): Promise<
       reject(request.error);
     };
   });
+};
+
+export const addWallet = async (
+  id: string,
+  password: string,
+  walletIndex: number
+) => {
+  const cipherText = await retrieveSecurePhrase();
+
+  const mnemonic = await decrypt(cipherText, password);
+  console.log(mnemonic);
+
+  const seedBuffer = mnemonicToSeedSync(mnemonic);
+
+  const path = `m/44'/${id}'/0'/${walletIndex}'`;
+  const { key: derivedSeed } = derivePath(path, seedBuffer.toString("hex"));
+
+  let publicKey: string;
+
+  if (id === "501") {
+    const { secretKey } = nacl.sign.keyPair.fromSeed(derivedSeed);
+    const keypair = Keypair.fromSecretKey(secretKey);
+
+    publicKey = keypair.publicKey.toBase58();
+    console.log(publicKey);
+
+    return publicKey;
+  }
 };
