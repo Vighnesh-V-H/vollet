@@ -17,7 +17,7 @@ function AddWalletForm() {
         <Button
           variant='ghost'
           onClick={async () => {
-            await addWallet("501", "123456789", 1);
+            await addWallet("501", "123456789");
           }}
           className='w-full flex justify-between items-center bg-[#1a1a1a] px-6 py-4 rounded-xl hover:bg-[#2a2a2a] transition text-white'>
           <div className='flex items-center gap-3'>

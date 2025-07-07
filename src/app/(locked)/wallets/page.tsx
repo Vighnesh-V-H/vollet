@@ -12,7 +12,7 @@ function Wallets() {
   const router = useRouter();
 
   const [wallets, setWallets] = useState<
-    { blockChainName: string; publicKey: string }[]
+    { walletName: string; publicKey: string }[]
   >([]);
 
   useEffect(() => {

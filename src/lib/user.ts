@@ -60,17 +60,20 @@ export const createUser = async ({
             ? "solana"
             : blockChainId === "60"
             ? "etherium"
-            : "";
+            : "unknown";
 
         const uuid = uuidv4();
+
         const newUser = {
           hasMnemonic: true,
           publicKeys: {
-            activeChain: `${blockChainName}`,
-            wallets: {
-              blockChainName,
-              publicKey,
-            },
+            activeChain: blockChainName,
+            wallets: [
+              {
+                walletName: "Wallet 1",
+                publicKey: publicKey,
+              },
+            ],
           },
           mnemonicCreatedAt: Date.now(),
           isUnlocked: true,
@@ -116,6 +119,7 @@ export const createUser = async ({
     request.onerror = () => reject(request.error);
   });
 };
+
 
 export const fetchUsers = (): Promise<{
   activeUser: any;
