@@ -21,7 +21,7 @@ function Wallets() {
       setWallets(result);
       return result;
     }
-    const wallet = getWallet();
+   getWallet();
   }, []);
 
   useEffect(() => {

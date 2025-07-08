@@ -28,7 +28,25 @@ interface WalletProp {
 }
 
 function WalletButton({ allWallets }: WalletProp) {
-  const [activePublicKey, setActivePublicKey] = useState("");
+
+  const [activeWallet, setActiveWallet] = useState<Wallet>({
+    walletName: "",
+    publicKey: "",
+  });
+
+  const [selectedWallet, setSelectedWallet] = useState<Wallet>({
+    walletName: "",
+    publicKey: "",
+  });
+
+  function handleSetActiveWallet(wallet: Wallet) {
+    console.log(wallet);
+    setActiveWallet({ ...wallet });
+  }
+
+  function handleSelectedWallet(wallet: Wallet) {
+    setSelectedWallet(wallet);
+  }
 
   return (
     <>
@@ -42,7 +60,7 @@ function WalletButton({ allWallets }: WalletProp) {
                 className='dark:bg-white size-1'
               />
               <DrawerTrigger className='text-xl cursor-pointer'>
-                Wallet 1{" "}
+                {activeWallet.walletName || "wallet 1"}
               </DrawerTrigger>
             </div>
           </div>
@@ -64,24 +82,25 @@ function WalletButton({ allWallets }: WalletProp) {
                 {allWallets.map((wallet, index) => (
                   <div
                     key={index}
+                    onClick={() => handleSetActiveWallet(wallet)}
                     className='dark:bg-[#1b1b1b] cursor-pointer dark:text-[#d4d2d2] pl-5 pr-5 text-black bg-[#fff] flex items-center justify-between w-[300px] mx-auto p-4 rounded-md shadow-md'>
-                    {wallet.walletName === "solana" ? (
-                      <SiSolana className='text-emerald-400 ' />
-                    ) : (
-                      <FaEthereum />
-                    )}
+                    <SiSolana />
                     <div>
-                      <p className='text-xl '>Wallet {index + 1}</p>
+                      <p className='text-xl '>{wallet.walletName} </p>
                       <p>{wallet.publicKey.substring(0, 12)}...</p>
                     </div>
-                    <SheetTrigger>
+                    <SheetTrigger
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelectedWallet(wallet);
+                      }}>
                       <HiOutlineDotsVertical className='size-6 cursor-pointer' />
                     </SheetTrigger>
                   </div>
                 ))}
               </div>
 
-              <WalletSheet walletData={allWallets} />
+              <WalletSheet wallet={selectedWallet} />
             </Sheet>
           </DrawerContent>
         </Drawer>

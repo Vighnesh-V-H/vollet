@@ -6,6 +6,11 @@ import bs58 from "bs58";
 import { decrypt, encrypt } from "./crypto";
 import { retrieveSecurePhrase, storeSecurePhrase } from "./store/indexdb";
 
+interface Wallet {
+  walletName: string;
+  publicKey: string;
+}
+
 export const generateWallet = async (
   id: string,
   password: string,
@@ -83,14 +88,12 @@ export const getWallets = (): Promise<
         const wallets: Array<{ walletName: string; publicKey: string }> = [];
 
         result.users.forEach((user: any) => {
-          const walletName = user.publicKeys?.activeChain ?? "unknown";
-
           const userWallets = user.publicKeys?.wallets ?? [];
 
           if (Array.isArray(userWallets)) {
-            userWallets.forEach((wallet: any) => {
+            userWallets.forEach((wallet: Wallet) => {
               wallets.push({
-                walletName,
+                walletName: wallet.walletName,
                 publicKey: wallet.publicKey,
               });
             });
