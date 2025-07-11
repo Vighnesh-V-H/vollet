@@ -39,9 +39,8 @@ export const generateWallet = async (
       return publicKey;
     } else if (id === "60") {
       // Ethereum
-      const privateKey = Buffer.from(derivedSeed).toString("hex");
+      // const privateKey = Buffer.from(derivedSeed).toString("hex");
       // privateKeyEncoded = privateKey;
-
       // const wallet = new ethers.Wallet(privateKey);
       // publicKeyEncoded = wallet.address;
     } else {
@@ -261,4 +260,19 @@ export const addWallet = async (
 
     request.onerror = () => reject(request.error);
   });
+};
+
+export const showPrivateKey = async (walletIndex: number, password: string) => {
+  const cipherText = await retrieveSecurePhrase();
+  const mnemonic = await decrypt(cipherText, password);
+
+  const path = `m/44'/501'/0'/${walletIndex}'`;
+  const seedBuffer = mnemonicToSeedSync(mnemonic);
+
+  const { key: derivedSeed } = derivePath(path, seedBuffer.toString("hex"));
+
+  const { secretKey } = nacl.sign.keyPair.fromSeed(derivedSeed);
+  const keypair = Keypair.fromSecretKey(secretKey);
+  const privateKey = Buffer.from(keypair.secretKey).toString("hex");
+  console.log(privateKey);
 };

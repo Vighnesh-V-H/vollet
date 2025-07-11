@@ -17,8 +17,10 @@ import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import CopyButton from "./copy-button";
 
 interface Wallet {
+  index?: number;
   walletName: string;
   publicKey: string;
 }
@@ -28,7 +30,6 @@ interface WalletProp {
 }
 
 function WalletButton({ allWallets }: WalletProp) {
-
   const [activeWallet, setActiveWallet] = useState<Wallet>({
     walletName: "",
     publicKey: "",
@@ -44,8 +45,8 @@ function WalletButton({ allWallets }: WalletProp) {
     setActiveWallet({ ...wallet });
   }
 
-  function handleSelectedWallet(wallet: Wallet) {
-    setSelectedWallet(wallet);
+  function handleSelectedWallet(wallet: Wallet, index: number) {
+    setSelectedWallet({ ...wallet, index });
   }
 
   return (
@@ -55,13 +56,21 @@ function WalletButton({ allWallets }: WalletProp) {
           <div className=' mt-3 w-full flex justify-center'>
             <div className='flex gap-4 items-center'>
               <SiSolana className='text-emerald-600 ' />
-              <Separator
-                orientation='vertical'
-                className='dark:bg-white size-1'
-              />
+              <div className='h-8'>
+                <Separator orientation='vertical' className='dark:bg-white  ' />
+              </div>
               <DrawerTrigger className='text-xl cursor-pointer'>
                 {activeWallet.walletName || "wallet 1"}
               </DrawerTrigger>
+              <div className='h-8'>
+                <Separator orientation='vertical' className='dark:bg-white  ' />
+              </div>
+              <span className='flex flex-col '>
+                <CopyButton text={activeWallet.publicKey} />
+                <span className=' opacity-30'>
+                  {activeWallet.publicKey.substring(0, 8)}...{" "}
+                </span>
+              </span>
             </div>
           </div>
           <DrawerContent className='h-full'>
@@ -92,7 +101,7 @@ function WalletButton({ allWallets }: WalletProp) {
                     <SheetTrigger
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSelectedWallet(wallet);
+                        handleSelectedWallet(wallet, index);
                       }}>
                       <HiOutlineDotsVertical className='size-6 cursor-pointer' />
                     </SheetTrigger>
