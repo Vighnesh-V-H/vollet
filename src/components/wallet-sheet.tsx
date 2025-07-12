@@ -25,6 +25,8 @@ interface WalletSheetProps {
 
 function WalletSheet({ wallet }: WalletSheetProps) {
   const [option, setOption] = useState<"show-key" | "remove">("show-key");
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  console.log(isOpen);
 
   const truncateAddress = (address: string) => {
     if (address.length <= 10) return address;
@@ -33,7 +35,7 @@ function WalletSheet({ wallet }: WalletSheetProps) {
 
   return (
     <SheetContent className='w-full overflow-auto sm:max-w-md p-0 bg-background'>
-      <Dialog>
+      <Dialog onOpenChange={() => setIsOpen(!isOpen)}>
         <SheetHeader className='px-6 py-4 border-b border-border'>
           <div className='flex items-center gap-3'>
             <SheetClose asChild>
@@ -46,7 +48,11 @@ function WalletSheet({ wallet }: WalletSheetProps) {
             </SheetTitle>
           </div>
         </SheetHeader>
-        <WalleetModal option={option} walletIndex={wallet.index!} />
+        <WalleetModal
+          isOpen={isOpen}
+          option={option}
+          walletIndex={wallet.index!}
+        />
 
         <div className='flex flex-col'>
           <div
