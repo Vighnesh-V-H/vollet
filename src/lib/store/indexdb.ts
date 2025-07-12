@@ -11,7 +11,7 @@ function getUserDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("UserDB");
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains("userStore")) {
         db.createObjectStore("userStore", { keyPath: "key" });

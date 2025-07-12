@@ -6,7 +6,7 @@ interface SetupUser {
   name: string;
   password: string;
   blockChainId: string;
-  accountIndex?: Number;
+  accountIndex?: number;
 }
 
 export const isNewUser = () => {
@@ -18,13 +18,8 @@ export const createUser = async ({
   name,
   password,
   blockChainId,
-  accountIndex,
 }: SetupUser): Promise<void> => {
-  const publicKey = await generateWallet(
-    blockChainId,
-    password,
-    (accountIndex = 0)
-  );
+  const publicKey = await generateWallet(blockChainId, password, 0);
 
   return new Promise((resolve, reject) => {
     const request = indexedDB.open("UserDB");

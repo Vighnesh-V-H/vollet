@@ -1,8 +1,8 @@
 import nacl from "tweetnacl";
-import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from "bip39";
+import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
 import { Keypair } from "@solana/web3.js";
-import bs58 from "bs58";
+
 import { decrypt, encrypt } from "./crypto";
 import { retrieveSecurePhrase, storeSecurePhrase } from "./store/indexdb";
 

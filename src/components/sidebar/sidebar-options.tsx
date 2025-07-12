@@ -11,12 +11,12 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { lockUser } from "@/lib/store/indexdb";
 
 export function SidebarOptions() {
   const pathname = usePathname();
-  const router = useRouter();
+
 
   async function handleLock() {
     await lockUser();

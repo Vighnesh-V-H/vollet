@@ -21,7 +21,7 @@ export default function Home() {
     } else {
       router.push("/unlock");
     }
-  }, [isNewUser]);
+  }, [isNewUser, isUnlocked, router]);
 
   return (
     <div className='flex flex-col gap-8 dark:bg-black bg-white h-screen  items-center w-screen '>

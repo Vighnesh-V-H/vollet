@@ -7,7 +7,7 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { SiSolana } from "react-icons/si";
-import { FaEthereum } from "react-icons/fa";
+// import { FaEthereum } from "react-icons/fa";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import WalletSheet from "./wallet-sheet";
 

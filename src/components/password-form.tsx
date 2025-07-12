@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { passwordSchema } from "@/lib/schema";
 import { useRouter } from "next/navigation";
 import { setupUser } from "@/lib/password";
-import { generateWallet } from "@/lib/wallet";
+
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 

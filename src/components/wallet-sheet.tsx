@@ -3,13 +3,7 @@ import { ArrowLeft, ChevronRight } from "lucide-react";
 import { SheetClose, SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { Button } from "./ui/button";
 import CopyButton from "./copy-button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 import WalleetModal from "./wallet-modal";
 import { useState } from "react";
 

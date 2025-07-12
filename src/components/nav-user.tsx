@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Check,
-  ChevronsUpDown,
-  Lock,
-  Plus,
-  Search,
-  Settings,
-} from "lucide-react";
+import { Check, Lock, Plus, Search, Settings } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {

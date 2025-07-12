@@ -7,10 +7,10 @@ import { createUser } from "./user";
 interface SetupUser {
   pass: z.infer<typeof passwordSchema>;
   id: string;
-  accountIndex?: Number;
+  accountIndex?: number;
 }
 
-export async function setupUser({ id, pass, accountIndex }: SetupUser) {
+export async function setupUser({ id, pass }: SetupUser) {
   const success = passwordSchema.safeParse(pass);
   if (!success.success) {
     return;

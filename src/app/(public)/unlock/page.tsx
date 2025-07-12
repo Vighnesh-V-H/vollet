@@ -35,13 +35,12 @@ export default function UnlockForm() {
     } else {
       router.push("/unlock");
     }
-  }, [isNewUser, isUnlocked]);
+  }, [isUnlocked, router]);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
+    formState: { isSubmitting },
   } = useForm<PasswordFormData>({
     resolver: zodResolver(unlockPasswordSchema),
   });

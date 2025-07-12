@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { addWallet, generateWallet } from "@/lib/wallet";
+import { addWallet } from "@/lib/wallet";
 import { Plus, KeyRound, ChevronRight } from "lucide-react";
 
 function AddWalletForm() {
