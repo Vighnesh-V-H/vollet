@@ -1,8 +1,6 @@
 import { randomBytes, secretbox } from "tweetnacl";
-
 import bs58 from "bs58";
 import Crypto from "crypto";
-
 const { encode, decode } = bs58;
 
 export function generateSalt(length = 16): Uint8Array {

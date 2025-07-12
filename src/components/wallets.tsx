@@ -12,12 +12,13 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import WalletSheet from "./wallet-sheet";
 
 import { Sheet, SheetTrigger } from "./ui/sheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import CopyButton from "./copy-button";
+import { storeActiveWallet, retrieveActiveWallet } from "@/lib/store/indexdb";
 
 interface Wallet {
   index?: number;
@@ -40,10 +41,27 @@ function WalletButton({ allWallets }: WalletProp) {
     publicKey: "",
   });
 
-  function handleSetActiveWallet(wallet: Wallet) {
-    console.log(wallet);
-    setActiveWallet({ ...wallet });
+  async function handleSetActiveWallet(wallet: Wallet) {
+    try {
+      setActiveWallet({ ...wallet });
+      await storeActiveWallet(wallet);
+    } catch (err) {
+      console.error("Failed to store active wallet", err);
+    }
   }
+
+  useEffect(() => {
+    const fetchActive = async () => {
+      try {
+        const wallet = await retrieveActiveWallet();
+        if (wallet) setActiveWallet(wallet);
+      } catch (err) {
+        console.error("Failed to retrieve active wallet", err);
+      }
+    };
+
+    fetchActive();
+  }, []);
 
   function handleSelectedWallet(wallet: Wallet, index: number) {
     setSelectedWallet({ ...wallet, index });

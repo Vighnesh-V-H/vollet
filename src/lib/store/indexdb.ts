@@ -172,3 +172,104 @@ export function retrieveSecurePhrase(): Promise<CipherPayload> {
     request.onerror = () => reject(request.error);
   });
 }
+
+
+interface Wallet {
+  index?: number;
+  walletName: string;
+  publicKey: string;
+}
+
+export function storeActiveWallet(wallet: Wallet): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const openRequest = indexedDB.open("WalletDB");
+
+    openRequest.onsuccess = () => {
+      const db = openRequest.result;
+
+      if (!db.objectStoreNames.contains("activeWallet")) {
+        const newVersion = db.version + 1;
+        db.close();
+
+        const upgradeRequest = indexedDB.open("WalletDB", newVersion);
+        upgradeRequest.onupgradeneeded = () => {
+          const upgradeDb = upgradeRequest.result;
+          if (!upgradeDb.objectStoreNames.contains("activeWallet")) {
+            upgradeDb.createObjectStore("activeWallet");
+          }
+        };
+
+        upgradeRequest.onsuccess = () => {
+          const upgradedDb = upgradeRequest.result;
+          const tx = upgradedDb.transaction("activeWallet", "readwrite");
+          const store = tx.objectStore("activeWallet");
+
+          const putRequest = store.put(wallet, "active-wallet");
+
+          putRequest.onsuccess = () => {
+            upgradedDb.close();
+            resolve();
+          };
+
+          putRequest.onerror = () => {
+            upgradedDb.close();
+            reject(putRequest.error);
+          };
+        };
+
+        upgradeRequest.onerror = () => reject(upgradeRequest.error);
+      } else {
+        // Store exists — proceed as normal
+        const tx = db.transaction("activeWallet", "readwrite");
+        const store = tx.objectStore("activeWallet");
+
+        const putRequest = store.put(wallet, "active-wallet");
+
+        putRequest.onsuccess = () => {
+          db.close();
+          resolve();
+        };
+
+        putRequest.onerror = () => {
+          db.close();
+          reject(putRequest.error);
+        };
+      }
+    };
+
+    openRequest.onerror = () => reject(openRequest.error);
+  });
+}
+
+export function retrieveActiveWallet(): Promise<Wallet | null> {
+  return new Promise((resolve, reject) => {
+    const openRequest = indexedDB.open("WalletDB");
+
+    openRequest.onsuccess = () => {
+      const db = openRequest.result;
+
+      if (!db.objectStoreNames.contains("activeWallet")) {
+        db.close();
+        resolve(null);
+        return;
+      }
+
+      const tx = db.transaction("activeWallet", "readonly");
+      const store = tx.objectStore("activeWallet");
+
+      const getRequest = store.get("active-wallet");
+
+      getRequest.onsuccess = () => {
+        db.close();
+        resolve(getRequest.result || null);
+      };
+
+      getRequest.onerror = () => {
+        db.close();
+        reject(getRequest.error);
+      };
+    };
+
+    openRequest.onerror = () => reject(openRequest.error);
+  });
+}

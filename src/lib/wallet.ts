@@ -209,7 +209,6 @@ export const addWallet = async (
 
         const user = data.activeUser;
 
-        // Normalize to array if not already
         if (!Array.isArray(user.publicKeys.wallets)) {
           const oldWallet = user.publicKeys.wallets?.publicKey
             ? [
@@ -231,7 +230,6 @@ export const addWallet = async (
 
         user.publicKeys.wallets.push(newWallet);
 
-        // Also update the same user in `users[]`
         const userIndex = data.users.findIndex(
           (u: any) => u.uuid === user.uuid
         );
@@ -295,3 +293,5 @@ export const showPrivateKey = async (
     return { success: false, error };
   }
 };
+
+export const setActiveWallet = async () => {};
