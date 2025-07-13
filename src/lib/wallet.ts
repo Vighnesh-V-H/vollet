@@ -1,7 +1,12 @@
 import nacl from "tweetnacl";
 import { generateMnemonic, mnemonicToSeedSync } from "bip39";
 import { derivePath } from "ed25519-hd-key";
-import { Keypair } from "@solana/web3.js";
+import {
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+} from "@solana/web3.js";
 
 import { decrypt, encrypt } from "./crypto";
 import { retrieveSecurePhrase, storeSecurePhrase } from "./store/indexdb";
@@ -294,4 +299,39 @@ export const showPrivateKey = async (
   }
 };
 
-export const setActiveWallet = async () => {};
+export const getBalance = async (publicKeyString: string) => {
+  try {
+    const ALCHEMY_DEVNET_URL =
+      "https://solana-devnet.g.alchemy.com/v2/mcyGhOrkjNyYYnCytQSICvfM9tUH8IUZ";
+
+    console.log(publicKeyString);
+
+    const connection = new Connection(ALCHEMY_DEVNET_URL, "confirmed");
+
+    const publicKey = new PublicKey(publicKeyString);
+    const lamports = await connection.getBalance(publicKey);
+    const balance = lamports / LAMPORTS_PER_SOL;
+
+    return { balance };
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export async function convertSOLtoUSD(solAmount: number) {
+  const url =
+    "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd";
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const solPrice = data.solana.usd;
+    const usdValue = solAmount * solPrice;
+
+    return usdValue;
+  } catch (error) {
+    console.error("Error fetching SOL price:", error);
+    return null;
+  }
+}

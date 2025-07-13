@@ -6,12 +6,8 @@ import CopyButton from "./copy-button";
 import { Dialog, DialogTrigger } from "./ui/dialog";
 import WalleetModal from "./wallet-modal";
 import { useState } from "react";
+import { Wallet } from "@/types/wallet";
 
-interface Wallet {
-  index?: number;
-  walletName: string;
-  publicKey: string;
-}
 
 interface WalletSheetProps {
   wallet: Wallet;

@@ -15,10 +15,11 @@ import { Sheet, SheetTrigger } from "./ui/sheet";
 import { useEffect, useState } from "react";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { Plus } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import Link from "next/link";
 import CopyButton from "./copy-button";
 import { storeActiveWallet, retrieveActiveWallet } from "@/lib/store/indexdb";
+import DisplayBalance from "./display-balance";
 
 interface Wallet {
   index?: number;
@@ -69,7 +70,7 @@ function WalletButton({ allWallets }: WalletProp) {
 
   return (
     <>
-      <div className='space-y-2'>
+      <div className='space-y-2 bg-background w-[400px] mx-auto p-6 h-full rounded-xl'>
         <Drawer>
           <div className=' mt-3 w-full flex justify-center'>
             <div className='flex gap-4 items-center'>
@@ -78,8 +79,12 @@ function WalletButton({ allWallets }: WalletProp) {
                 <Separator orientation='vertical' className='dark:bg-white  ' />
               </div>
               <DrawerTrigger className='text-xl cursor-pointer'>
-                {activeWallet.walletName || "wallet 1"}
+                <div className='flex gap-2 justify-center hover:bg-[#171717] items-center bg-[#212121] rounded-md p-1'>
+                  {activeWallet.walletName || "wallet 1"}
+                  <ChevronDown className='size-6' />
+                </div>
               </DrawerTrigger>
+
               <div className='h-8'>
                 <Separator orientation='vertical' className='dark:bg-white  ' />
               </div>
@@ -90,6 +95,9 @@ function WalletButton({ allWallets }: WalletProp) {
                 </span>
               </span>
             </div>
+          </div>
+          <div className='mx-auto w-full'>
+            <DisplayBalance wallet={activeWallet} />
           </div>
           <DrawerContent className='h-full'>
             <div className='bg-[#66666661] h-3  mx-auto w-[150px] rounded-2xl'></div>
