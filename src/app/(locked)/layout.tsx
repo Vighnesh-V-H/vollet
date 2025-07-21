@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipGlobal } from "@/components/tooltip-global";
 import { NavUser } from "@/components/nav-user";
+import { Toaster } from "sonner";
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,7 +36,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           </header>
           <main className='flex-1 dark:bg-[#191818] dark:text-white bg-[#ffffff] text-background overflow-auto p-6 '>
             {children}
-            {/* <Toaster /> */}
+            <Toaster />
           </main>
         </SidebarInset>
       </SidebarProvider>

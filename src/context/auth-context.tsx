@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { hashPassword } from "@/lib/crypto";
 import { getUnlockState, storeUnlockState } from "@/lib/store/indexdb";
+import { storeEncryptedPassword } from "@/lib/password";
 
 interface AuthContextType {
   isUnlocked: boolean;
@@ -45,6 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const actualVerifier = await hashPassword(password, salt);
 
     if (actualVerifier === passwordVerifier) {
+      await storeEncryptedPassword(password, process.env.SECRET!);
       await storeUnlockState(true);
       setIsUnlocked(true);
       return true;
@@ -55,6 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const lock = () => {
     setIsUnlocked(false);
+    sessionStorage.removeItem("encPassword");
     sessionStorage.removeItem("isUnlocked");
     router.push("/unlock");
   };

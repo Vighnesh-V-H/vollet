@@ -168,7 +168,7 @@ const getNextWalletIndex = (): Promise<number> => {
 export const addWallet = async (
   id: string,
   password: string
-): Promise<void> => {
+): Promise<string> => {
   const cipherText = await retrieveSecurePhrase();
   const mnemonic = await decrypt(cipherText, password);
   const seedBuffer = mnemonicToSeedSync(mnemonic);
@@ -246,7 +246,7 @@ export const addWallet = async (
 
         putRequest.onsuccess = () => {
           db.close();
-          resolve();
+          resolve("Success! created new wallet");
         };
 
         putRequest.onerror = () => {
@@ -261,7 +261,9 @@ export const addWallet = async (
       };
     };
 
-    request.onerror = () => reject(request.error);
+    request.onerror = () => {
+      reject(request.error);
+    };
   });
 };
 
