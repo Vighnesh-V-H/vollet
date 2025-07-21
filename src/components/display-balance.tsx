@@ -18,7 +18,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const SOL_TO_USD_RATE = 98.5;
 
   const fetchBalance = async () => {
     try {
@@ -125,7 +124,7 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
           <WalletIcon className='h-5 w-5 text-foreground' />
           <div>
             <h3 className='text-base font-medium text-foreground'>
-              Wallet Balance
+              Wallet Balance <span className=' opacity-20'>(devnet only)</span>
             </h3>
             <p className='text-sm text-muted-foreground'>
               {truncateAddress(wallet.publicKey)}
@@ -157,13 +156,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
           <div className='text-xl font-medium text-foreground'>
             {formatUSD(usdValue)}
           </div>
-        </div>
-      </div>
-
-      <div className='mt-8 pt-4 border-t border-border'>
-        <div className='flex items-center justify-between text-xs text-muted-foreground'>
-          <span>Rate: {formatUSD(SOL_TO_USD_RATE)}/SOL</span>
-          <span>Last updated: {new Date().toLocaleTimeString()}</span>
         </div>
       </div>
     </div>

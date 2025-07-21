@@ -28,7 +28,7 @@ function Blockchains() {
               Solana
             </Button>
           </CardContent>
-          <CardContent className='w-full'>
+          {/* <CardContent className='w-full'>
             <Button
               onClick={handleClick}
               id='60'
@@ -36,7 +36,7 @@ function Blockchains() {
               className='w-full'>
               Etherium
             </Button>
-          </CardContent>
+          </CardContent> */}
         </Card>
       </div>
     </>

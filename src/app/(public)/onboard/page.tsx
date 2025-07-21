@@ -2,8 +2,9 @@
 
 import PasswordForm from "@/components/password-form";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-function Onboard() {
+function OnboardContent() {
   const searchParmas = useSearchParams();
   const id = searchParmas.get("id");
 
@@ -15,6 +16,14 @@ function Onboard() {
     <div className='flex h-screen items-center justify-center'>
       <PasswordForm id={id} />
     </div>
+  );
+}
+
+function Onboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <OnboardContent />
+    </Suspense>
   );
 }
 
