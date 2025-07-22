@@ -60,6 +60,11 @@ export async function storeUnlockState(isUnlocked: boolean): Promise<void> {
 }
 
 export async function getUnlockState(): Promise<boolean> {
+  const encPassword = sessionStorage.getItem("encPassword");
+  if (!encPassword) {
+    return false;
+  }
+
   const db = await getUserDB();
   const tx = db.transaction("userStore", "readonly");
   const store = tx.objectStore("userStore");
@@ -69,9 +74,9 @@ export async function getUnlockState(): Promise<boolean> {
 
     getRequest.onsuccess = () => {
       const data = getRequest.result;
-      const state = data?.isUnlocked ?? false; // ✅ Read from root
+      const state = data?.isUnlocked ?? false;
       db.close();
-      resolve(state);
+      resolve(state && !!encPassword); // both must be truthy
     };
 
     getRequest.onerror = () => {
@@ -96,7 +101,7 @@ export async function lockUser(): Promise<void> {
         reject(new Error("No userData found"));
         return;
       }
-
+      window.sessionStorage.removeItem("encPassword");
       data.isUnlocked = false;
 
       const putRequest = store.put(data);

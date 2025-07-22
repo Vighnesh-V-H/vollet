@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const lock = () => {
     setIsUnlocked(false);
-    sessionStorage.removeItem("encPassword");
+
     sessionStorage.removeItem("isUnlocked");
     router.push("/unlock");
   };
