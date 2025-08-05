@@ -303,10 +303,7 @@ export const showPrivateKey = async (
 
 export const getBalance = async (publicKeyString: string) => {
   try {
-    const ALCHEMY_DEVNET_URL =
-      "https://solana-devnet.g.alchemy.com/v2/mcyGhOrkjNyYYnCytQSICvfM9tUH8IUZ";
-
-    console.log(publicKeyString);
+    const ALCHEMY_DEVNET_URL = process.env.NEXT_PUBLIC_ALCHEMY_DEVNET_URL!;
 
     const connection = new Connection(ALCHEMY_DEVNET_URL, "confirmed");
 

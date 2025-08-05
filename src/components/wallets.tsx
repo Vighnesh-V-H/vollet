@@ -70,7 +70,7 @@ function WalletButton({ allWallets }: WalletProp) {
 
   return (
     <>
-      <div className='space-y-2 bg-background w-[400px] mx-auto p-6 h-full rounded-xl'>
+      <div className='space-y-2 bg-background max-w-lg dark:bg-[#111010] mx-auto p-6 h-full rounded-xl'>
         <Drawer>
           <div className=' mt-3 w-full flex justify-center'>
             <div className='flex gap-4 items-center'>
