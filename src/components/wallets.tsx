@@ -42,10 +42,13 @@ function WalletButton({ allWallets }: WalletProp) {
     publicKey: "",
   });
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   async function handleSetActiveWallet(wallet: Wallet) {
     try {
       setActiveWallet({ ...wallet });
       await storeActiveWallet(wallet);
+      setDrawerOpen(false);
     } catch (err) {
       console.error("Failed to store active wallet", err);
     }
@@ -71,7 +74,7 @@ function WalletButton({ allWallets }: WalletProp) {
   return (
     <>
       <div className='space-y-2 bg-background max-w-lg dark:bg-[#111010] mx-auto p-6 h-full rounded-xl'>
-        <Drawer>
+        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <div className=' mt-3 w-full flex justify-center'>
             <div className='flex gap-4 items-center'>
               <SiSolana className='text-emerald-600 ' />
@@ -117,7 +120,9 @@ function WalletButton({ allWallets }: WalletProp) {
                 {allWallets.map((wallet, index) => (
                   <div
                     key={index}
-                    onClick={() => handleSetActiveWallet(wallet)}
+                    onClick={() => {
+                      handleSetActiveWallet(wallet);
+                    }}
                     className='dark:bg-[#1b1b1b] cursor-pointer dark:text-[#d4d2d2] pl-5 pr-5 text-black bg-[#fff] flex items-center justify-between w-[300px] mx-auto p-4 rounded-md shadow-md'>
                     <SiSolana />
                     <div>
