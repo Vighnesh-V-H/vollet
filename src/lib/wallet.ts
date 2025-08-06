@@ -318,6 +318,7 @@ export const getBalance = async (publicKeyString: string) => {
 };
 
 export async function convertSOLtoUSD(solAmount: number) {
+  console.log(solAmount);
   const url =
     "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd";
 

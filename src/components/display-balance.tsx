@@ -11,6 +11,8 @@ import {
   RefreshCw,
   AlertTriangle,
 } from "lucide-react";
+import { Button } from "./ui/button";
+import Link from "next/link";
 
 interface DisplayBalanceProps {
   wallet: Wallet;
@@ -29,7 +31,7 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
       const res = await getBalance(wallet.publicKey);
       if (res?.balance !== undefined) {
         setBalance(res.balance);
-        const usd = await convertSOLtoUSD(balance);
+        const usd = await convertSOLtoUSD(res.balance);
         if (usd) setUsdValue(usd);
       }
     } catch (error) {
@@ -44,11 +46,12 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await fetchBalance();
+    await convertSOLtoUSD(balance);
   };
 
   useEffect(() => {
     fetchBalance();
-  }, [wallet.publicKey]);
+  }, [wallet]);
 
   const formatBalance = (value: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -84,7 +87,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
 
   return (
     <div className='w-full max-w-lg mx-auto bg-gradient-to-b from-[#171717]  to-[#202020] text-white h-[500px] overflow-hidden flex flex-col'>
-      {/* Main Content */}
       <div className='flex-1 p-3 space-y-4'>
         <div className='text-center relative'>
           <div className='flex items-center justify-center gap-1 mb-1'>
@@ -94,8 +96,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
           <div className='text-gray-400 text-xs'>
             {formatUSD(usdValue)} <span className='text-gray-500'>0%</span>
           </div>
-
-          {/* Refresh Button */}
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
@@ -109,24 +109,27 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
           </button>
         </div>
 
-        {/* Action Buttons */}
-        <div className='grid grid-cols-4 gap-2'>
-          <button className='flex flex-col items-center gap-1 p-2 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
+        <div className='grid h-14 grid-cols-3 gap-2'>
+          {/* <Button className='opacity-40 flex cursor-not-allowed flex-col items-center gap-3 p-8 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
             <Building2 className='h-4 w-4 text-blue-400' />
             <span className='text-xs text-gray-300'>Cash</span>
-          </button>
-          <button className='flex flex-col items-center gap-1 p-2 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
+          </Button> */}
+          <Button className='flex flex-col items-center gap-1 p-8 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
             <ArrowDown className='h-4 w-4 text-blue-400' />
             <span className='text-xs text-gray-300'>Receive</span>
-          </button>
-          <button className='flex flex-col items-center gap-1 p-2 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
-            <ArrowUp className='h-4 w-4 text-blue-400' />
-            <span className='text-xs text-gray-300'>Send</span>
-          </button>
-          <button className='flex flex-col items-center gap-1 p-2 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
+          </Button>
+
+          <Link href={"/send"}>
+            <Button className='flex flex-col w-full items-center gap-1 p-8 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
+              <ArrowUp className='h-4 w-4 text-blue-400' />
+              <span className='text-xs text-gray-300'>Send</span>
+            </Button>
+          </Link>
+
+          <Button className=' opacity-25 flex cursor-not-allowed flex-col items-center gap-1 p-8 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
             <RefreshCw className='h-4 w-4 text-blue-400' />
             <span className='text-xs text-gray-300'>Swap</span>
-          </button>
+          </Button>
         </div>
 
         {/* <div className='bg-slate-800/30 rounded-xl p-3 relative'>
@@ -144,7 +147,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
           </div>
         </div> */}
 
-        {/* Token List */}
         <div className='space-y-2'>
           <div className='flex items-center justify-between p-3 bg-slate-800/30 rounded-xl'>
             <div className='flex items-center gap-2'>
