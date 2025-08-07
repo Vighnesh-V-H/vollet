@@ -90,9 +90,7 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
 
   return (
     <div className='w-full max-w-sm mx-auto bg-gradient-to-b from-[#171717]  to-[#202020] text-white h-[500px] overflow-hidden flex flex-col'>
-      {/* Main Content */}
       <div className='flex-1 p-3 space-y-4'>
-        {/* Balance Section with Refresh Button */}
         <div className='text-center relative'>
           <div className='flex items-center justify-center gap-1 mb-1'>
             <span className='text-3xl font-light'>{formatUSD(usdValue)}</span>
@@ -102,7 +100,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
             {formatUSD(usdValue)} <span className='text-gray-500'>0%</span>
           </div>
 
-          {/* Refresh Button */}
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
@@ -116,30 +113,28 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
           </button>
         </div>
 
-        {/* Action Buttons */}
         <div className='grid grid-cols-3 h-16 gap-2'>
           {/* <Button className='flex flex-col items-center gap-1 p-6 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
             <Building2 className='h-4 w-4 text-blue-400' />
             <span className='text-xs text-gray-300'>Cash</span>
           </Button> */}
           <Button className='flex flex-col items-center gap-1 p-6 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
-            <ArrowDown className='h-4 w-4 text-blue-400' />
+            <ArrowDown className='h-4 w-4 text-emerald-400' />
             <span className='text-xs text-gray-300'>Receive</span>
           </Button>
 
           <Link href={"/send"}>
             <Button className='flex  flex-col w-full items-center gap-1 p-6 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
-              <ArrowUp className='h-4 w-4 text-blue-400' />
+              <ArrowUp className='h-4 w-4  text-emerald-400' />
               <span className='text-xs text-gray-300'>Send</span>
             </Button>
           </Link>
 
           <Button className='flex flex-col items-center gap-1 p-6 bg-slate-800/50 rounded-xl hover:bg-slate-700/50 transition-colors'>
-            <RefreshCw className='h-4 w-4 text-blue-400' />
+            <RefreshCw className='h-4 w-4  text-emerald-400' />
             <span className='text-xs text-gray-300'>Swap</span>
           </Button>
         </div>
-
         {/* Security Warning Card */}
         {/* <div className='bg-slate-800/30 rounded-xl p-3 relative'>
           <div className='flex items-start gap-2'>
@@ -155,7 +150,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
             <AlertTriangle className='h-5 w-5 text-yellow-500 flex-shrink-0' />
           </div>
         </div> */}
-
         <div className='space-y-2'>
           <div className='flex items-center justify-between p-3 bg-slate-800/30 rounded-xl'>
             <div className='flex items-center gap-2'>
@@ -177,8 +171,6 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
             </div>
           </div>
         </div>
-
-        {/* Error Display */}
         {error && (
           <div className='bg-red-900/30 border border-red-500/30 rounded-xl p-3'>
             <div className='flex items-center gap-2'>

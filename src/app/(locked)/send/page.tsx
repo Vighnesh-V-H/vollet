@@ -1,5 +1,7 @@
+import SendForm from "@/components/send-form";
+
 function Send() {
-  return <div>send</div>;
+  return <SendForm />;
 }
 
 export default Send;
