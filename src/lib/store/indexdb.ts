@@ -185,12 +185,35 @@ interface Wallet {
   publicKey: string;
 }
 
-export function storeActiveWallet(wallet: Wallet): Promise<void> {
+export function storeActiveWallet(
+  wallet: Wallet,
+  index: number
+): Promise<void> {
   return new Promise((resolve, reject) => {
+    // Add index into the wallet object
+    const updatedWallet = { ...wallet, index };
+
     const openRequest = indexedDB.open("WalletDB");
 
     openRequest.onsuccess = () => {
       const db = openRequest.result;
+
+      const saveData = () => {
+        const tx = db.transaction("activeWallet", "readwrite");
+        const store = tx.objectStore("activeWallet");
+
+        const putRequest = store.put(updatedWallet, "active-wallet");
+
+        putRequest.onsuccess = () => {
+          db.close();
+          resolve();
+        };
+
+        putRequest.onerror = () => {
+          db.close();
+          reject(putRequest.error);
+        };
+      };
 
       if (!db.objectStoreNames.contains("activeWallet")) {
         const newVersion = db.version + 1;
@@ -209,7 +232,7 @@ export function storeActiveWallet(wallet: Wallet): Promise<void> {
           const tx = upgradedDb.transaction("activeWallet", "readwrite");
           const store = tx.objectStore("activeWallet");
 
-          const putRequest = store.put(wallet, "active-wallet");
+          const putRequest = store.put(updatedWallet, "active-wallet");
 
           putRequest.onsuccess = () => {
             upgradedDb.close();
@@ -224,27 +247,14 @@ export function storeActiveWallet(wallet: Wallet): Promise<void> {
 
         upgradeRequest.onerror = () => reject(upgradeRequest.error);
       } else {
-        // Store exists — proceed as normal
-        const tx = db.transaction("activeWallet", "readwrite");
-        const store = tx.objectStore("activeWallet");
-
-        const putRequest = store.put(wallet, "active-wallet");
-
-        putRequest.onsuccess = () => {
-          db.close();
-          resolve();
-        };
-
-        putRequest.onerror = () => {
-          db.close();
-          reject(putRequest.error);
-        };
+        saveData();
       }
     };
 
     openRequest.onerror = () => reject(openRequest.error);
   });
 }
+
 
 export function retrieveActiveWallet(): Promise<Wallet | null> {
   return new Promise((resolve, reject) => {

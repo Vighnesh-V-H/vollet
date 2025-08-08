@@ -22,7 +22,7 @@ function SendForm() {
     { walletName: string; publicKey: string }[]
   >([]);
   const [selectedWallet, setSelectedWallet] = useState<string>("");
-  const [inputValue, setInputValue] = useState<string>("");
+  const [reciever, setReciever] = useState<string>("");
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [amount, setAmount] = useState<string>("");
   const [isWalletSelected, setIsWalletSelected] = useState<boolean>(false);
@@ -32,6 +32,15 @@ function SendForm() {
   const router = useRouter();
 
   useEffect(() => {
+    const saved = localStorage.getItem("sendFormData");
+    if (saved) {
+      const { reciever, amount, selectedWallet } = JSON.parse(saved);
+      setReciever(reciever);
+      setAmount(amount);
+      setSelectedWallet(selectedWallet);
+      setIsWalletSelected(!!selectedWallet);
+    }
+
     async function getWallet() {
       const result = await getWallets();
       setWallets(result);
@@ -55,20 +64,20 @@ function SendForm() {
     publicKey: string;
   }) => {
     setSelectedWallet(wallet.publicKey);
-    setInputValue(wallet.publicKey);
+    setReciever(wallet.publicKey);
     setIsWalletSelected(true);
-    setShowDropdown(false); // Close the popover after selection
+    setShowDropdown(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setInputValue(value);
+    setReciever(value);
     setSelectedWallet(value);
   };
 
   const handleClearSelection = () => {
     setSelectedWallet("");
-    setInputValue("");
+    setReciever("");
     setIsWalletSelected(false);
   };
 
@@ -86,7 +95,7 @@ function SendForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(balance);
+
     if (Number(amount) > balance!) {
       toast.error("Insufficient balance", {
         position: "top-right",
@@ -97,10 +106,19 @@ function SendForm() {
         },
       });
     }
-    console.log("Send SOL submit", {
-      recipientAddress: inputValue,
-      amount,
-    });
+
+    localStorage.setItem(
+      "sendFormData",
+      JSON.stringify({
+        reciever,
+        amount,
+        selectedWallet,
+      })
+    );
+
+    router.push(
+      `/confirm-transaction/?from=${sender?.publicKey}&to=${reciever}&amount=${amount}&index=${sender?.index}`
+    );
   };
 
   return (
@@ -129,7 +147,7 @@ function SendForm() {
                 <h3>{sender?.walletName}</h3>
                 <h3 className='text-gray-600'>(balance:{balance} SOL)</h3>
               </div>
-              <h3>{sender?.publicKey}</h3>
+              <h3>{sender?.publicKey.substring(0, 14)}...</h3>
             </div>
           </div>
           <div className='space-y-2'>
@@ -138,7 +156,7 @@ function SendForm() {
             </label>
             <div className='relative' ref={dropdownRef}>
               <Input
-                value={inputValue}
+                value={reciever}
                 onChange={handleInputChange}
                 disabled={isWalletSelected}
                 placeholder='Enter wallet address'
@@ -165,9 +183,9 @@ function SendForm() {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className='w-80 p-0 max-h-60 overflow-y-auto'
+                      className='w-full p-0 max-h-60 overflow-y-auto'
                       align='end'
-                      side='bottom'
+                      // side='top'
                       sideOffset={5}>
                       <div className='bg-white dark:bg-[#181818] border border-gray-300 dark:border-gray-700 rounded-md shadow-lg'>
                         {wallets.length > 0 ? (
