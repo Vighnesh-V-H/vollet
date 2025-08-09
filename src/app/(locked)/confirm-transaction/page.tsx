@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { sendSOL } from "@/lib/transactions";
 
 function ConfirmTransaction() {
   const searchParams = useSearchParams();
@@ -13,13 +14,30 @@ function ConfirmTransaction() {
   const index = searchParams.get("index");
   const amt = searchParams.get("amount");
 
+  if (
+    !from ||
+    !to ||
+    !index ||
+    !amt ||
+    isNaN(Number(index)) ||
+    isNaN(Number(amt))
+  ) {
+    window.location.replace("/send");
+    return (
+      <div className='text-red-800'>
+        Invalid transaction ...
+        <div> redirecting to send</div>
+      </div>
+    );
+  }
+
   const handleCancel = () => {
     router.push("/send");
   };
 
-  const handleSend = () => {
-    // Add your send logic here
-    console.log("Transaction sent");
+  const handleSend = async () => {
+    const res = await sendSOL(Number(index), to, Number(amt));
+    console.log(res);
   };
 
   return (

@@ -16,6 +16,8 @@ import { retrieveActiveWallet } from "@/lib/store/indexdb";
 import { Wallet } from "@/types/wallet";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { isNewUser } from "@/lib/user";
+import { useAuth } from "@/context/auth-context";
 
 function SendForm() {
   const [wallets, setWallets] = useState<
@@ -30,9 +32,18 @@ function SendForm() {
   const [balance, setBalance] = useState<number>();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { isNewUser, isUnlocked } = useAuth();
 
   useEffect(() => {
-    const saved = localStorage.getItem("sendFormData");
+    if (!isUnlocked) {
+      router.push("/unlock");
+    } else if (!isNewUser()) {
+      router.push("/");
+    }
+  }, [isNewUser, isUnlocked, router]);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("sendFormData");
     if (saved) {
       const { reciever, amount, selectedWallet } = JSON.parse(saved);
       setReciever(reciever);
@@ -107,7 +118,7 @@ function SendForm() {
       });
     }
 
-    localStorage.setItem(
+    sessionStorage.setItem(
       "sendFormData",
       JSON.stringify({
         reciever,

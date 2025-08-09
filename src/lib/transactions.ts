@@ -5,50 +5,57 @@ import {
   Transaction,
   Keypair,
   sendAndConfirmTransaction,
+  LAMPORTS_PER_SOL,
 } from "@solana/web3.js";
+import { decryptStoredPassword } from "./password";
+import { showPrivateKey } from "./wallet";
 
-const connection = new Connection(
-  process.env.NEXT_PUBLIC_ALCHEMY_DEVNET_URL!,
-  "confirmed"
-);
+import { hexToUint8Array } from "./crypto";
 
-// Your sender's keypair (from private key bytes)
-const senderPrivateKey = Uint8Array.from([
-  // Replace with your 64-byte private key array
-]);
-const senderKeypair = Keypair.fromSecretKey(senderPrivateKey);
-
-// Build, sign and send transfer as a reusable function
-export async function sendSolTransaction(
+export async function sendSOL(
   walletIndex: number,
-  senderPublicKey: string,
-  receiverPublicKey: string
+  receiverPublicKey: string,
+  amount: number
 ): Promise<string> {
-  // Note: senderPublicKey and walletIndex are accepted for future derivation/validation.
-  // Currently signing uses the placeholder senderKeypair above.
+  try {
+    const connection = new Connection(
+      process.env.NEXT_PUBLIC_ALCHEMY_DEVNET_URL!,
+      "confirmed"
+    );
 
-  const toPubkey = new PublicKey(receiverPublicKey);
+    const password = await decryptStoredPassword(process.env.SECRET!);
+    if (!password) {
+      return "something went wrong try after some time";
+    }
+    const result = await showPrivateKey(walletIndex, password);
+    if (!result.success || !result.privateKey) {
+      return "something went wrong try after some time";
+    }
 
-  // Create transfer instruction
-  const transaction = new Transaction().add(
-    SystemProgram.transfer({
-      fromPubkey: senderKeypair.publicKey,
-      toPubkey: toPubkey,
-      lamports: 0.01 * 1e9, // 0.01 SOL
-    })
-  );
+    const privKey = hexToUint8Array(result.privateKey);
+    console.log(privKey);
 
-  // (Optional) Set a recent blockhash & fee payer
-  const { blockhash } = await connection.getLatestBlockhash();
-  transaction.recentBlockhash = blockhash;
-  transaction.feePayer = senderKeypair.publicKey;
+    const senderKeypair = Keypair.fromSecretKey(privKey);
+    console.log(senderKeypair);
+    const lamports = amount * LAMPORTS_PER_SOL;
 
-  // Sign transaction with sender's private key
-  transaction.sign(senderKeypair);
+    const toPubkey = new PublicKey(receiverPublicKey);
 
-  // Send & confirm
-  const signature = await sendAndConfirmTransaction(connection, transaction, [
-    senderKeypair,
-  ]);
-  return signature;
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: senderKeypair.publicKey,
+        toPubkey,
+        lamports,
+      })
+    );
+
+    const signature = await sendAndConfirmTransaction(connection, transaction, [
+      senderKeypair,
+    ]);
+
+    return signature;
+  } catch (error) {
+    console.error("Error sending SOL:", error);
+    return "failed to send transaction";
+  }
 }
