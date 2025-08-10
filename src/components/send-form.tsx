@@ -68,7 +68,7 @@ function SendForm() {
       }
     }
     getWallet();
-  }, []);
+  }, [router]);
 
   const handleWalletSelect = (wallet: {
     walletName: string;
@@ -163,7 +163,7 @@ function SendForm() {
           </div>
           <div className='space-y-2'>
             <label className='text-sm text-gray-600 dark:text-gray-400'>
-              Recipient's Solana address
+              Recipient&apos;s Solana address
             </label>
             <div className='relative' ref={dropdownRef}>
               <Input

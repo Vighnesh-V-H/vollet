@@ -1,14 +1,14 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { sendSOL } from "@/lib/transactions";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
-function ConfirmTransaction() {
+function ConfirmTransactionContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const from = searchParams.get("from");
@@ -51,7 +51,6 @@ function ConfirmTransaction() {
       } else {
         setStatusMessage("✅ Transaction confirmed!");
         toast.success(`Transaction successful: ${res}`);
-        // Redirect to /wallets on success
         setTimeout(() => {
           router.push("/wallets");
         }, 1500);
@@ -91,7 +90,6 @@ function ConfirmTransaction() {
           </div>
         </div>
 
-        {/* Loading State with Spinner */}
         {loading && (
           <div className='flex flex-col items-center justify-center py-8 space-y-4'>
             <div className='relative'>
@@ -135,6 +133,14 @@ function ConfirmTransaction() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function ConfirmTransaction() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConfirmTransactionContent />
+    </Suspense>
   );
 }
 
