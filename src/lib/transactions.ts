@@ -19,7 +19,7 @@ export async function sendSOL(
 ): Promise<string> {
   try {
     const connection = new Connection(
-      process.env.NEXT_PUBLIC_ALCHEMY_DEVNET_URL!,
+      "https://api.devnet.solana.com",
       "confirmed"
     );
 
@@ -33,10 +33,9 @@ export async function sendSOL(
     }
 
     const privKey = hexToUint8Array(result.privateKey);
-    console.log(privKey);
 
     const senderKeypair = Keypair.fromSecretKey(privKey);
-    console.log(senderKeypair);
+
     const lamports = amount * LAMPORTS_PER_SOL;
 
     const toPubkey = new PublicKey(receiverPublicKey);
@@ -48,6 +47,8 @@ export async function sendSOL(
         lamports,
       })
     );
+    
+    
 
     const signature = await sendAndConfirmTransaction(connection, transaction, [
       senderKeypair,
