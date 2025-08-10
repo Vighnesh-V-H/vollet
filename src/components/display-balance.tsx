@@ -54,7 +54,7 @@ function DisplayBalance({ wallet }: DisplayBalanceProps) {
     setBalance(0);
     setUsdValue(0);
     fetchBalance(wallet.publicKey);
-  }, [wallet.publicKey, fetchBalance]);
+  }, [wallet.publicKey]);
 
   const formatBalance = (value: number) => {
     return new Intl.NumberFormat("en-US", {

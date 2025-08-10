@@ -110,26 +110,25 @@ function SendForm() {
     if (Number(amount) > balance!) {
       toast.error("Insufficient balance", {
         position: "top-right",
-        description: "Yes we are broke 👍",
 
         classNames: {
           content: "text-red-600",
         },
       });
+    } else {
+      sessionStorage.setItem(
+        "sendFormData",
+        JSON.stringify({
+          reciever,
+          amount,
+          selectedWallet,
+        })
+      );
+
+      router.push(
+        `/confirm-transaction/?from=${sender?.publicKey}&to=${reciever}&amount=${amount}&index=${sender?.index}`
+      );
     }
-
-    sessionStorage.setItem(
-      "sendFormData",
-      JSON.stringify({
-        reciever,
-        amount,
-        selectedWallet,
-      })
-    );
-
-    router.push(
-      `/confirm-transaction/?from=${sender?.publicKey}&to=${reciever}&amount=${amount}&index=${sender?.index}`
-    );
   };
 
   return (
